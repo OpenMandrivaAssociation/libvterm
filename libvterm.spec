@@ -10,7 +10,7 @@ Summary:        An abstract library implementation of a VT220/xterm/ECMA-48 term
 License:        MIT
 Group:          Development/C
 Url:            https://launchpad.net/libvterm
-Source:         %{name}-%{version}.tar.xz
+Source0:	libvterm-0~bzr%{snap}.tar.xz
 BuildRequires:  libtool
 
 %description
@@ -42,7 +42,7 @@ Summary:        Tools for libvterm
 This package contains tools for libvterm.
 
 %prep
-%setup -q
+%setup -qn libvterm-0~bzr%{snap}
 
 %build
 %setup_compile_flags
