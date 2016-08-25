@@ -1,10 +1,11 @@
 %define major 0
 %define libname %mklibname vterm %{major}
 %define devname %mklibname vterm -d
+%define snap 681
 
 Name:           libvterm
-Version:        0~bzr681
-Release:        1
+Version:        0.%{snap}.0
+Release:        2
 Summary:        An abstract library implementation of a VT220/xterm/ECMA-48 terminal emulator
 License:        MIT
 Group:          Development/C
