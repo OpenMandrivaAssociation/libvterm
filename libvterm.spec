@@ -1,16 +1,14 @@
 %define major 0
 %define libname %mklibname vterm %{major}
 %define devname %mklibname vterm -d
-%define snap 681
+%define date	20170208
 
 Name:           libvterm
-Version:        0.%{snap}.0
-Release:        2
-Summary:        An abstract library implementation of a VT220/xterm/ECMA-48 terminal emulator
+Version:        0
+Release:        0.%{date}.1
+Source:         %{name}-%{version}-%{date}.tar.xz
 License:        MIT
-Group:          Development/C
 Url:            https://launchpad.net/libvterm
-Source0:	libvterm-0~bzr%{snap}.tar.xz
 BuildRequires:  libtool
 
 %description
@@ -42,7 +40,7 @@ Summary:        Tools for libvterm
 This package contains tools for libvterm.
 
 %prep
-%setup -qn libvterm-0~bzr%{snap}
+%setup -qn %{name}-%{version}-%{date}
 
 %build
 %setup_compile_flags
