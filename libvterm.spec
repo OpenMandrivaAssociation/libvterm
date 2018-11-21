@@ -7,6 +7,7 @@ Name:           libvterm
 Version:        0
 Release:        0.%{date}.1
 Source:         %{name}-%{version}-%{date}.tar.xz
+Summary:        An abstract C99 library which implements a VT220 or xterm-like terminal.
 License:        MIT
 Url:            https://launchpad.net/libvterm
 BuildRequires:  libtool
