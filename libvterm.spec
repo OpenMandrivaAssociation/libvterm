@@ -1,12 +1,11 @@
 %define major 0
 %define libname %mklibname vterm %{major}
 %define devname %mklibname vterm -d
-%define date	20190921
 
 Name:           libvterm
-Version:        0
-Release:        0.%{date}.1
-Source0:        %{name}-%{version}-%{date}.tar.xz
+Version:        0.2
+Release:        1
+Source0:        https://launchpad.net/libvterm/trunk/v%{version}/+download/libvterm-%{version}.tar.gz
 Summary:        An abstract C99 library which implements a VT220 or xterm-like terminal.
 License:        MIT
 Url:            https://launchpad.net/libvterm
@@ -41,7 +40,7 @@ Summary:        Tools for libvterm
 This package contains tools for libvterm.
 
 %prep
-%setup -qn %{name}-%{version}-%{date}
+%autosetup -p1
 
 %build
 %setup_compile_flags
