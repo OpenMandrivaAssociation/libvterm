@@ -3,7 +3,7 @@
 %define devname %mklibname vterm -d
 
 Name:           libvterm
-Version:        0.2
+Version:        0.3
 Release:        1
 Source0:        https://launchpad.net/libvterm/trunk/v%{version}/+download/libvterm-%{version}.tar.gz
 Summary:        An abstract C99 library which implements a VT220 or xterm-like terminal.
