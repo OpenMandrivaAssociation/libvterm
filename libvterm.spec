@@ -1,15 +1,17 @@
 %define major 0
-%define libname %mklibname vterm %{major}
+%define oldlibname %mklibname vterm 0
+%define libname %mklibname vterm
 %define devname %mklibname vterm -d
 
 Name:           libvterm
-Version:        0.3
-Release:        2
-Source0:        https://launchpad.net/libvterm/trunk/v%{version}/+download/libvterm-%{version}.tar.gz
+Version:        0.3.3
+Release:        1
+Source0:        https://launchpad.net/libvterm/trunk/v%(echo %{version}|cut -d. -f1-2)/+download/libvterm-%{version}.tar.gz
+# Libtool is good for nothing and breaks crosscompiling. Let's kill it.
+Patch0:		libvterm-0.3.3-libtool-die-die-die.patch
 Summary:        An abstract C99 library which implements a VT220 or xterm-like terminal.
 License:        MIT
 Url:            https://launchpad.net/libvterm
-BuildRequires:  libtool
 
 %description
 An abstract C99 library which implements a VT220 or xterm-like terminal
@@ -18,6 +20,7 @@ emulator.
 %package -n	%{libname}
 Summary:        Shared library package of libvterm
 Group:          System/Libraries
+%rename %{oldlibname}
 
 %description -n %{libname}
 An abstract C99 library which implements a VT220 or xterm-like
@@ -44,8 +47,9 @@ This package contains tools for libvterm.
 
 %build
 %setup_compile_flags
-%make PREFIX=%{_prefix} \
-     LIBDIR=%{_libdir}
+%make	PREFIX=%{_prefix} \
+	CC="%{__cc}" \
+	LIBDIR=%{_libdir}
 
 %install
 %make PREFIX=%{_prefix} \

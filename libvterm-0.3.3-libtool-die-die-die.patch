@@ -1,0 +1,99 @@
+diff -up libvterm-0.3.3/Makefile.omv~ libvterm-0.3.3/Makefile
+--- libvterm-0.3.3/Makefile.omv~	2023-09-06 23:55:42.021189482 +0100
++++ libvterm-0.3.3/Makefile	2023-09-06 23:59:17.081671582 +0100
+@@ -1,13 +1,3 @@
+-ifeq ($(shell uname),Darwin)
+-  LIBTOOL ?= glibtool
+-else
+-  LIBTOOL ?= libtool
+-endif
+-
+-ifneq ($(VERBOSE),1)
+-  LIBTOOL +=--quiet
+-endif
+-
+ override CFLAGS +=-Wall -Iinclude -std=c99 -Wpedantic
+ 
+ ifeq ($(shell uname),SunOS)
+@@ -23,10 +13,12 @@ ifeq ($(PROFILE),1)
+   override LDFLAGS+=-pg
+ endif
+ 
++override CFLAGS += -fPIC
++
+ CFILES=$(sort $(wildcard src/*.c))
+ HFILES=$(sort $(wildcard include/*.h))
+-OBJECTS=$(CFILES:.c=.lo)
+-LIBRARY=libvterm.la
++OBJECTS=$(CFILES:.c=.o)
++LIBRARY=libvterm.so.0.0.0
+ 
+ BINFILES_SRC=$(sort $(wildcard bin/*.c))
+ BINFILES=$(BINFILES_SRC:.c=)
+@@ -53,11 +45,11 @@ all: $(LIBRARY) $(BINFILES)
+ 
+ $(LIBRARY): $(OBJECTS)
+ 	@echo LINK $@
+-	@$(LIBTOOL) --mode=link --tag=CC $(CC) -rpath $(LIBDIR) -version-info $(VERSION_CURRENT):$(VERSION_REVISION):$(VERSION_AGE) -o $@ $^ $(LDFLAGS)
++	@$(CC) -shared -Wl,-soname,libvterm.so.0 -o $@ $^ $(LDFLAGS)
+ 
+-src/%.lo: src/%.c $(HFILES_INT)
++src/%.o: src/%.c $(HFILES_INT)
+ 	@echo CC $<
+-	@$(LIBTOOL) --mode=compile --tag=CC $(CC) $(CFLAGS) -o $@ -c $<
++	@$(CC) $(CFLAGS) -o $@ -c $<
+ 
+ src/encoding/%.inc: src/encoding/%.tbl
+ 	@echo TBL $<
+@@ -66,19 +58,19 @@ src/encoding/%.inc: src/encoding/%.tbl
+ src/fullwidth.inc:
+ 	@perl find-wide-chars.pl >$@
+ 
+-src/encoding.lo: $(INCFILES)
++src/encoding.o: $(INCFILES)
+ 
+ bin/%: bin/%.c $(LIBRARY)
+ 	@echo CC $<
+-	@$(LIBTOOL) --mode=link --tag=CC $(CC) $(CFLAGS) -o $@ $< -lvterm $(LDFLAGS)
++	@$(CC) $(CFLAGS) -o $@ $< $(LIBRARY) $(LDFLAGS)
+ 
+ t/harness.lo: t/harness.c $(HFILES)
+ 	@echo CC $<
+-	@$(LIBTOOL) --mode=compile --tag=CC $(CC) $(CFLAGS) -o $@ -c $<
++	@$(CC) $(CFLAGS) -o $@ -c $<
+ 
+ t/harness: t/harness.lo $(LIBRARY)
+ 	@echo LINK $@
+-	@$(LIBTOOL) --mode=link --tag=CC $(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
++	@$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+ 
+ .PHONY: test
+ test: $(LIBRARY) t/harness
+@@ -86,9 +78,9 @@ test: $(LIBRARY) t/harness
+ 
+ .PHONY: clean
+ clean:
+-	$(LIBTOOL) --mode=clean rm -f $(OBJECTS) $(INCFILES)
+-	$(LIBTOOL) --mode=clean rm -f t/harness.lo t/harness
+-	$(LIBTOOL) --mode=clean rm -f $(LIBRARY) $(BINFILES)
++	rm -f $(OBJECTS) $(INCFILES)
++	rm -f t/harness.o t/harness
++	rm -f $(LIBRARY) $(BINFILES)
+ 
+ .PHONY: install
+ install: install-inc install-lib install-bin
+@@ -101,10 +93,11 @@ install-inc:
+ 
+ install-lib: $(LIBRARY)
+ 	install -d $(DESTDIR)$(LIBDIR)
+-	$(LIBTOOL) --mode=install install $(LIBRARY) $(DESTDIR)$(LIBDIR)/$(LIBRARY)
+-	$(LIBTOOL) --mode=finish $(DESTDIR)$(LIBDIR)
++	install -c -m 755 $(LIBRARY) $(DESTDIR)$(LIBDIR)/$(LIBRARY)
++	ln -sf $(LIBRARY) $(DESTDIR)$(LIBDIR)/libvterm.so.0
++	ln -sf $(LIBRARY) $(DESTDIR)$(LIBDIR)/libvterm.so
+ 
+ install-bin: $(BINFILES)
+ 	install -d $(DESTDIR)$(BINDIR)
+-	$(LIBTOOL) --mode=install install $(BINFILES) $(DESTDIR)$(BINDIR)/
++	install -c -m 755 $(BINFILES) $(DESTDIR)$(BINDIR)/
+ 
