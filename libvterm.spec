@@ -13,6 +13,7 @@ Summary:        An abstract C99 library which implements a VT220 or xterm-like t
 License:        MIT
 Url:            https://launchpad.net/libvterm
 
+BuildRequires:	make
 %description
 An abstract C99 library which implements a VT220 or xterm-like terminal
 emulator.
